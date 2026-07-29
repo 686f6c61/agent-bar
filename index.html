@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AGENT-BAR — your AI agents, on the record</title>
+<meta name="description" content="Linux top-bar indicator for Kimi Code, Claude Code and Codex: 'needs you' alerts with the exact question, live token counter, context %, cost estimation, multi-session stats.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'><circle cx='11' cy='11' r='9' fill='%23e66100'/><text x='11' y='15.5' font-size='12' font-weight='bold' fill='white' text-anchor='middle'>?</text></svg>">
+<style>
+  :root {
+    --ink: #111111;
+    --paper: #f4f1ea;
+    --accent: #e66100;
+    --blue: #3584e4;
+    --green: #2ec27e;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: ui-monospace, "JetBrains Mono", "IBM Plex Mono", Menlo, Consolas, monospace;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+  ::selection { background: var(--accent); color: #fff; }
+
+  /* ---------- top strip ---------- */
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 3px solid var(--ink);
+    padding: 10px 20px;
+    font-size: 14px; font-weight: 700;
+    position: sticky; top: 0; background: var(--paper); z-index: 10;
+  }
+  .topbar a { color: var(--ink); text-decoration: none; }
+  .topbar nav a {
+    margin-left: 16px; padding: 4px 10px; border: 2px solid transparent;
+  }
+  .topbar nav a:hover { border-color: var(--ink); background: var(--accent); color: #fff; }
+
+  /* ---------- hero ---------- */
+  .hero { border-bottom: 3px solid var(--ink); padding: 60px 20px 40px; }
+  .hero h1 {
+    font-size: clamp(52px, 12vw, 160px);
+    font-weight: 900; letter-spacing: -0.04em; line-height: 0.9;
+    text-transform: uppercase;
+  }
+  .hero h1 .q {
+    display: inline-block; background: var(--accent); color: #fff;
+    padding: 0 0.15em; border: 4px solid var(--ink);
+    animation: blink 1.2s steps(2) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0.25; } }
+  .hero p {
+    margin-top: 24px; font-size: clamp(16px, 2.5vw, 22px); max-width: 780px;
+    font-weight: 600;
+  }
+  .hero .cta { margin-top: 32px; display: flex; flex-wrap: wrap; gap: 14px; }
+  .btn {
+    display: inline-block; padding: 14px 24px; font-weight: 800; font-size: 16px;
+    color: var(--ink); background: #fff; text-decoration: none;
+    border: 3px solid var(--ink); box-shadow: 6px 6px 0 var(--ink);
+    transition: transform .08s, box-shadow .08s;
+  }
+  .btn:hover { transform: translate(3px, 3px); box-shadow: 3px 3px 0 var(--ink); }
+  .btn.primary { background: var(--accent); color: #fff; }
+
+  /* ---------- ticker ---------- */
+  .ticker {
+    border-bottom: 3px solid var(--ink); background: var(--ink); color: var(--paper);
+    overflow: hidden; white-space: nowrap; padding: 8px 0; font-weight: 700;
+  }
+  .ticker span { display: inline-block; padding-right: 48px; animation: tick 22s linear infinite; }
+  @keyframes tick { to { transform: translateX(-50%); } }
+
+  /* ---------- sections ---------- */
+  section { border-bottom: 3px solid var(--ink); padding: 48px 20px; }
+  .tag {
+    display: inline-block; background: var(--ink); color: var(--paper);
+    padding: 4px 12px; font-size: 13px; font-weight: 800; letter-spacing: .1em;
+    text-transform: uppercase; margin-bottom: 20px;
+  }
+  h2 {
+    font-size: clamp(30px, 5vw, 56px); font-weight: 900; text-transform: uppercase;
+    letter-spacing: -0.02em; line-height: 1; margin-bottom: 28px;
+  }
+
+  /* ---------- panel mock ---------- */
+  .mock-wrap { display: grid; gap: 28px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+  .mock {
+    background: #241f31; border: 3px solid var(--ink); box-shadow: 8px 8px 0 var(--ink);
+    padding: 14px 18px; color: #deddda; font-size: 14px;
+  }
+  .mock .caption {
+    background: var(--paper); color: var(--ink); display: inline-block;
+    padding: 2px 10px; font-weight: 800; font-size: 12px; margin-bottom: 12px;
+    border: 2px solid var(--ink); text-transform: uppercase;
+  }
+  .panel { display: flex; align-items: center; gap: 10px; }
+  .dot { width: 18px; height: 18px; border-radius: 50%; display: inline-block; flex: none; }
+  .dot.off { border: 2px solid #9a9996; }
+  .dot.idle { background: #9a9996; }
+  .dot.work {
+    border: 3px solid #c8c8c8; border-top-color: transparent; border-radius: 50%;
+    width: 16px; height: 16px; animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .dot.alert {
+    background: var(--accent); color: #fff; font-weight: 900; font-size: 13px;
+    display: inline-flex; align-items: center; justify-content: center;
+    animation: blink 1.2s steps(2) infinite;
+  }
+  .menu {
+    margin-top: 12px; background: var(--paper); color: var(--ink);
+    border: 3px solid var(--ink); font-size: 13px;
+  }
+  .menu div { padding: 8px 12px; border-bottom: 2px solid var(--ink); }
+  .menu div:last-child { border-bottom: none; }
+  .menu .hot { background: var(--accent); color: #fff; font-weight: 800; }
+  .menu .dim { color: #666; font-size: 12px; }
+  .cli { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; }
+  .cli.kimi { background: #4f7cff; } .cli.claude { background: #d97757; } .cli.codex { background: #10a37f; }
+
+  /* ---------- feature grid ---------- */
+  .grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .card {
+    background: #fff; border: 3px solid var(--ink); padding: 22px;
+    box-shadow: 8px 8px 0 var(--ink);
+  }
+  .card h3 { font-size: 20px; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; }
+  .card .num {
+    float: right; font-size: 40px; font-weight: 900; color: var(--accent);
+    line-height: 1;
+  }
+  .card p { font-size: 14px; }
+  .card.orange { background: var(--accent); color: #fff; }
+  .card.orange .num { color: #fff; }
+
+  /* ---------- table ---------- */
+  table { width: 100%; border-collapse: collapse; background: #fff; border: 3px solid var(--ink); }
+  th, td { border: 2px solid var(--ink); padding: 12px 14px; text-align: left; font-size: 14px; }
+  th { background: var(--ink); color: var(--paper); text-transform: uppercase; font-size: 12px; letter-spacing: .08em; }
+  .yes { color: var(--green); font-weight: 900; }
+  .no { color: var(--accent); font-weight: 900; }
+
+  /* ---------- install ---------- */
+  pre {
+    background: var(--ink); color: var(--paper); padding: 24px;
+    border: 3px solid var(--ink); box-shadow: 8px 8px 0 var(--accent);
+    overflow-x: auto; font-size: 15px; line-height: 1.7;
+  }
+  pre .c { color: #9a9996; }
+  pre .p { color: #57e389; }
+
+  /* ---------- footer ---------- */
+  footer { padding: 40px 20px; display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-between; align-items: center; }
+  footer .big { font-size: clamp(24px, 4vw, 44px); font-weight: 900; text-transform: uppercase; }
+  footer a { color: var(--ink); font-weight: 700; }
+  footer a:hover { background: var(--accent); color: #fff; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="#"><strong>AGENT-BAR</strong> v0.1.0</a>
+  <nav>
+    <a href="#features">Features</a>
+    <a href="#support">Support</a>
+    <a href="#install">Install</a>
+    <a href="https://github.com/686f6c61/agent-bar">GitHub ↗</a>
+  </nav>
+</div>
+
+<header class="hero">
+  <h1>Your agents<br>work. <span class="q">?</span><br>You watch.</h1>
+  <p>
+    AGENT-BAR is a Linux top-bar indicator for AI coding agents —
+    <strong>Kimi Code</strong>, <strong>Claude Code</strong> and <strong>Codex</strong>.
+    It taps you on the shoulder the exact moment an agent is stuck waiting for you,
+    counts every token live, and tells you what the day cost.
+  </p>
+  <div class="cta">
+    <a class="btn primary" href="#install">Install it</a>
+    <a class="btn" href="https://github.com/686f6c61/agent-bar">Star on GitHub</a>
+  </div>
+</header>
+
+<div class="ticker">
+  <span>NEEDS YOU ● LIVE TOKENS ● CTX 73% ● ~$3.42 TODAY ● MULTI-SESSION ● SQLITE STATS ● MIT LICENSE ● NEEDS YOU ● LIVE TOKENS ● CTX 73% ● ~$3.42 TODAY ● MULTI-SESSION ● SQLITE STATS ● MIT LICENSE ●&nbsp;</span>
+</div>
+
+<section>
+  <span class="tag">The problem</span>
+  <h2>Agents wait. You don't notice. Money burns.</h2>
+  <div class="mock-wrap">
+    <div class="mock">
+      <span class="caption">Nothing running</span>
+      <div class="panel"><span class="dot off"></span> <span>○&nbsp;&nbsp;no active sessions</span></div>
+    </div>
+    <div class="mock">
+      <span class="caption">Agent working</span>
+      <div class="panel"><span class="dot work"></span> <span>3.5M</span></div>
+    </div>
+    <div class="mock">
+      <span class="caption">It needs you. Right now.</span>
+      <div class="panel"><span class="dot alert">2</span> <span>12.7M</span></div>
+      <div class="menu">
+        <div class="hot"><span class="cli kimi"></span>Kimi · needs you · 24.1k tok · just now</div>
+        <div class="dim">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bash: rm -rf /tmp/build — allow?</div>
+        <div><span class="cli claude"></span>Claude · needs you · 8.2k tok · 1 min ago</div>
+        <div class="dim">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Approve the plan?</div>
+        <div>Today: 12.7M (Kimi 12.7M) · Week: 41M · ~$1.84 today</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <span class="tag">Features</span>
+  <h2>One icon. Total control.</h2>
+  <div class="grid">
+    <div class="card orange"><span class="num">01</span><h3>"Needs you" alert</h3>
+      <p>Pulsing orange badge with the count of blocked agents, plus a desktop notification carrying the exact question or permission. Never leave an agent hanging again.</p></div>
+    <div class="card"><span class="num">02</span><h3>Live token counter</h3>
+      <p>Today's spend right in the panel, parsed incrementally from each CLI's own transcripts. Zero polling cost, zero agents harmed.</p></div>
+    <div class="card"><span class="num">03</span><h3>Context %</h3>
+      <p>Context-window fill per session (<code>ctx 73%</code>). The early warning before a compaction eats your flow.</p></div>
+    <div class="card"><span class="num">04</span><h3>Cost estimation</h3>
+      <p>~$ per day and per session from an editable price table. Estimates, not invoices — vendors reprice, you stay in control.</p></div>
+    <div class="card"><span class="num">05</span><h3>Multi-session</h3>
+      <p>Every session in one menu: CLI, status, tokens, time in state, pending question. Kimi, Claude and Codex side by side.</p></div>
+    <div class="card"><span class="num">06</span><h3>Stats that persist</h3>
+      <p>SQLite history: today, this week, top sessions. <code>agent-bar stats</code> in the terminal. Restarts never double-count.</p></div>
+  </div>
+</section>
+
+<section id="support">
+  <span class="tag">Support matrix</span>
+  <h2>Three CLIs. Honest limits.</h2>
+  <table>
+    <tr><th>CLI</th><th>Working / done</th><th>"Needs you"</th><th>Tokens</th></tr>
+    <tr><td><strong>Kimi Code</strong></td><td class="yes">YES</td><td class="yes">YES — PermissionRequest + Notification</td><td class="yes">YES</td></tr>
+    <tr><td><strong>Claude Code</strong></td><td class="yes">YES</td><td class="yes">YES — Notification + PermissionRequest</td><td class="yes">YES</td></tr>
+    <tr><td><strong>Codex</strong></td><td class="yes">YES — turn complete</td><td class="no">NO — no such hook exists</td><td class="yes">YES — cumulative</td></tr>
+  </table>
+  <p style="margin-top:16px;font-size:14px">
+    Hooks are observational and fail-open: agent-bar can never block or break your CLI sessions.
+    GNOME, KDE Plasma, any StatusNotifier desktop. X11 and Wayland.
+  </p>
+</section>
+
+<section id="install">
+  <span class="tag">Install</span>
+  <h2>Three commands. Thirty seconds.</h2>
+  <pre><span class="c"># Ubuntu / Debian — other distros: see README</span>
+<span class="p">$</span> git clone https://github.com/686f6c61/agent-bar.git
+<span class="p">$</span> cd agent-bar
+<span class="p">$</span> ./scripts/install.sh
+
+<span class="c"># then watch the top bar. uninstall is one command too:</span>
+<span class="p">$</span> ./scripts/uninstall.sh</pre>
+  <p style="margin-top:16px;font-size:14px">
+    The installer sets up system deps, registers hooks in the three CLIs
+    (your configs are backed up first) and enables a systemd user unit.
+    <code>agent-bar doctor</code> verifies everything after install.
+  </p>
+</section>
+
+<footer>
+  <div class="big">MIT. OSS. No telemetry.</div>
+  <div>
+    <a href="https://github.com/686f6c61/agent-bar">GitHub</a> ·
+    <a href="https://github.com/686f6c61/agent-bar/releases/tag/v0.1.0">v0.1.0</a> ·
+    <a href="https://github.com/686f6c61/agent-bar/issues">Issues</a> ·
+    built by <a href="https://github.com/686f6c61">686f6c61</a>
+  </div>
+</footer>
+
+</body>
+</html>
