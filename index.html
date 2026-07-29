@@ -34,10 +34,16 @@
     position: sticky; top: 0; background: var(--paper); z-index: 10;
   }
   .topbar a { color: var(--ink); text-decoration: none; }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand svg { width: 34px; height: 34px; flex: none; }
+  .topbar nav { display: flex; align-items: center; }
   .topbar nav a {
     margin-left: 16px; padding: 4px 10px; border: 2px solid transparent;
+    display: inline-flex; align-items: center; gap: 6px;
   }
+  .topbar nav a svg { width: 15px; height: 15px; }
   .topbar nav a:hover { border-color: var(--ink); background: var(--accent); color: #fff; }
+  .topbar nav a:hover svg { fill: #fff; }
 
   /* ---------- hero ---------- */
   .hero { border-bottom: 3px solid var(--ink); padding: 60px 20px 40px; }
@@ -128,10 +134,13 @@
     background: #fff; border: 3px solid var(--ink); padding: 22px;
     box-shadow: 8px 8px 0 var(--ink);
   }
-  .card h3 { font-size: 20px; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; }
+  .card h3 { font-size: 20px; font-weight: 900; text-transform: uppercase; }
+  .card .head {
+    display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px;
+  }
   .card .num {
-    float: right; font-size: 40px; font-weight: 900; color: var(--accent);
-    line-height: 1;
+    font-size: 28px; font-weight: 900; color: var(--accent); line-height: 1;
+    flex: none;
   }
   .card p { font-size: 14px; }
   .card.orange { background: var(--accent); color: #fff; }
@@ -163,12 +172,15 @@
 <body>
 
 <div class="topbar">
-  <a href="#"><strong>AGENT-BAR</strong> v0.1.0</a>
+  <a href="#" class="brand">
+    <svg viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="9" fill="#e66100" stroke="#111" stroke-width="1.5"/><text x="11" y="15.5" font-family="monospace" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">?</text></svg>
+    <strong>AGENT-BAR</strong>&nbsp;v0.1.0
+  </a>
   <nav>
-    <a href="#features">Features</a>
-    <a href="#support">Support</a>
-    <a href="#install">Install</a>
-    <a href="https://github.com/686f6c61/agent-bar">GitHub ↗</a>
+    <a href="#features"><svg viewBox="0 0 16 16" fill="#111"><path d="M1 1h6v6H1zM9 1h6v6H9zM1 9h6v6H1zM9 9h6v6H9z"/></svg>Features</a>
+    <a href="#support"><svg viewBox="0 0 16 16" fill="#111"><path d="M1 2h14v2H1zM1 7h14v2H1zM1 12h14v2H1z"/></svg>Support</a>
+    <a href="#install"><svg viewBox="0 0 16 16" fill="#111"><path d="M8 1v9M4.5 6.5 8 10l3.5-3.5M2 13h12v2H2z" stroke="#111" stroke-width="2" fill="none"/></svg>Install</a>
+    <a href="https://github.com/686f6c61/agent-bar"><svg viewBox="0 0 16 16" fill="#111"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>GitHub ↗</a>
   </nav>
 </div>
 
@@ -220,17 +232,17 @@
   <span class="tag">Features</span>
   <h2>One icon. Total control.</h2>
   <div class="grid">
-    <div class="card orange"><span class="num">01</span><h3>"Needs you" alert</h3>
+    <div class="card orange"><div class="head"><span class="num">01</span><h3>"Needs you" alert</h3></div>
       <p>Pulsing orange badge with the count of blocked agents, plus a desktop notification carrying the exact question or permission. Never leave an agent hanging again.</p></div>
-    <div class="card"><span class="num">02</span><h3>Live token counter</h3>
+    <div class="card"><div class="head"><span class="num">02</span><h3>Live token counter</h3></div>
       <p>Today's spend right in the panel, parsed incrementally from each CLI's own transcripts. Zero polling cost, zero agents harmed.</p></div>
-    <div class="card"><span class="num">03</span><h3>Context %</h3>
+    <div class="card"><div class="head"><span class="num">03</span><h3>Context %</h3></div>
       <p>Context-window fill per session (<code>ctx 73%</code>). The early warning before a compaction eats your flow.</p></div>
-    <div class="card"><span class="num">04</span><h3>Cost estimation</h3>
+    <div class="card"><div class="head"><span class="num">04</span><h3>Cost estimation</h3></div>
       <p>~$ per day and per session from an editable price table. Estimates, not invoices — vendors reprice, you stay in control.</p></div>
-    <div class="card"><span class="num">05</span><h3>Multi-session</h3>
+    <div class="card"><div class="head"><span class="num">05</span><h3>Multi-session</h3></div>
       <p>Every session in one menu: CLI, status, tokens, time in state, pending question. Kimi, Claude and Codex side by side.</p></div>
-    <div class="card"><span class="num">06</span><h3>Stats that persist</h3>
+    <div class="card"><div class="head"><span class="num">06</span><h3>Stats that persist</h3></div>
       <p>SQLite history: today, this week, top sessions. <code>agent-bar stats</code> in the terminal. Restarts never double-count.</p></div>
   </div>
 </section>
@@ -271,6 +283,7 @@
   <div class="big">MIT. OSS. No telemetry.</div>
   <div>
     <a href="https://github.com/686f6c61/agent-bar">GitHub</a> ·
+    <a href="https://x.com/686f6c61">@686f6c61 on X</a> ·
     <a href="https://github.com/686f6c61/agent-bar/releases/tag/v0.1.0">v0.1.0</a> ·
     <a href="https://github.com/686f6c61/agent-bar/issues">Issues</a> ·
     built by <a href="https://github.com/686f6c61">686f6c61</a>
