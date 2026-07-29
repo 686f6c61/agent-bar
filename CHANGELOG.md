@@ -4,6 +4,15 @@ All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning follows [Semantic Versioning](https://semver.org/).
 
+## [0.1.2] - 2026-07-29
+
+### Changed
+
+- **Cost estimation now uses "fresh" tokens only** (input, output and
+  cache-write). cache-read — re-sent context that dominates token totals but
+  is cheap or free on most plans — no longer inflates the estimate. Today's
+  cost on heavy sessions drops from ~$190 to ~$12.
+
 ## [0.1.1] - 2026-07-29
 
 ### Fixed

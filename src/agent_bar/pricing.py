@@ -39,11 +39,16 @@ def merged_prices(overrides: dict | None = None) -> dict[str, dict[str, float]]:
 
 
 def cost(cli: str, usage: dict, prices: dict | None = None) -> float:
-    """Estimated USD for a normalized usage dict."""
+    """Estimated USD for a normalized usage dict.
+
+    Only "fresh" tokens count: input, output and cache-write (cache creation
+    is billed). cache-read is excluded — it is re-sent context, cheap or free
+    depending on the plan, and it dwarfs everything else.
+    """
     p = merged_prices(prices).get(cli)
     if not p:
         return 0.0
-    return sum(usage.get(k, 0) * p[k] for k in p) / 1_000_000
+    return sum(usage.get(k, 0) * p[k] for k in ("input", "output", "cache_write")) / 1_000_000
 
 
 def cost_all(per_cli_usage: dict[str, dict], prices: dict | None = None) -> float:

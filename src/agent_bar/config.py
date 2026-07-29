@@ -50,7 +50,8 @@ claude = {cw_claude}
 codex = {cw_codex}
 
 # Estimated prices, USD per 1M tokens. Vendors reprice often — adjust to your
-# plan. Costs are shown as estimates ("~"), never as exact invoices.
+# plan. Cost is computed from "fresh" tokens only (input, output, cache_write);
+# cache_read is re-sent context and is excluded from the estimate.
 [prices.kimi]
 input = {p_kimi_input}
 output = {p_kimi_output}

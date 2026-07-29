@@ -74,8 +74,8 @@ def main(argv: list[str] | None = None) -> int:
                   f" · cache-write {fmt_tokens(u['cache_write'])}")
         print(f"Week:  {fmt_tokens(sum_total(week))} tokens"
               f"  ({fmt_cost(cost_all(week, cfg.prices), cfg.currency)})")
-        print("\nNote: cache-read tokens are re-sent context billed at a lower"
-              " rate; they dominate the total but not the cost.")
+        print("\nNote: cache-read tokens are re-sent context; they dominate the"
+              " token total but are excluded from the cost estimate.")
         return 0
 
     if args.cmd == "doctor":

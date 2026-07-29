@@ -36,6 +36,13 @@ def test_context_pct():
     assert context_pct("kimi", 999_999_999) == 100.0  # clamped
 
 
+def test_cache_read_excluded_from_cost():
+    u = {"input": 0, "output": 0, "cache_read": 100_000_000, "cache_write": 0}
+    assert cost("kimi", u) == 0.0
+    u["cache_write"] = 1_000_000
+    assert cost("kimi", u) == DEFAULT_PRICES["kimi"]["cache_write"]
+
+
 def test_fmt_cost():
     assert fmt_cost(0) == "$0"
     assert fmt_cost(1.5).startswith("~$1.5")
