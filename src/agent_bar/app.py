@@ -127,7 +127,7 @@ class AgentBarApp:
         else:
             self.ind.set_icon_full("agent-bar-done", "agent-bar: done")
 
-        today = self.store.today_total()
+        today = self.store.today_total(self.cfg.count_cache_read)
         label = fmt_tokens(today) if (self.cfg.show_label and today) else ""
         self.ind.set_label(label, "999.9M")
 
@@ -190,7 +190,7 @@ class AgentBarApp:
 
     def _session_item(self, st) -> Gtk.MenuItem:
         cli = CLI_LABEL.get(st.cli, st.cli)
-        toks = fmt_tokens(total_tokens(st.tokens)) if st.tokens else "0"
+        toks = fmt_tokens(total_tokens(st.tokens, self.cfg.count_cache_read)) if st.tokens else "0"
         top = (f"{cli} · {STATUS_LABEL.get(st.status, st.status)}"
                f" · {toks} tok · {fmt_elapsed(st.updated_at)}")
         ctx = context_pct(st.cli, self.store.last_context(st), self.cfg.context_window)
@@ -241,8 +241,9 @@ class AgentBarApp:
 
         today = self.store.stats().today()
         week = self.store.stats().week()
+        inc_cache = self.cfg.count_cache_read
         per_cli = ", ".join(
-            f"{CLI_LABEL.get(k, k)} {fmt_tokens(total_tokens(v))}"
+            f"{CLI_LABEL.get(k, k)} {fmt_tokens(total_tokens(v, inc_cache))}"
             for k, v in sorted(today.items())
         )
         cost_txt = ""
@@ -250,13 +251,25 @@ class AgentBarApp:
             cost_txt = (f" · {fmt_cost(cost_all(today, self.cfg.prices), self.cfg.currency)}"
                         f" today")
         stats_item = Gtk.MenuItem(
-            label=f"Today: {fmt_tokens(sum_total(today))}"
+            label=f"Today: {fmt_tokens(sum_total(today, inc_cache))}"
                   + (f" ({per_cli})" if per_cli else "")
-                  + f" · Week: {fmt_tokens(sum_total(week))}"
+                  + f" · Week: {fmt_tokens(sum_total(week, inc_cache))}"
                   + cost_txt
         )
         stats_item.set_sensitive(False)
         self.menu.append(stats_item)
+
+        if today:
+            bd = {"input": 0, "output": 0, "cache_read": 0, "cache_write": 0}
+            for u in today.values():
+                for k in bd:
+                    bd[k] += u.get(k, 0)
+            detail = Gtk.MenuItem(
+                label=f"   in {fmt_tokens(bd['input'])} · out {fmt_tokens(bd['output'])}"
+                      f" · cache {fmt_tokens(bd['cache_read'])}"
+                      + ("" if inc_cache else " (excluded)"))
+            detail.set_sensitive(False)
+            self.menu.append(detail)
 
         top = Gtk.MenuItem(label="Top sessions")
         submenu = Gtk.Menu()
@@ -289,6 +302,7 @@ class AgentBarApp:
         sub = Gtk.Menu()
 
         for label, attr in (("Show token counter", "show_label"),
+                            ("Include cache-read in totals", "count_cache_read"),
                             ("Animate while working", "spinner"),
                             ("Desktop notifications", "notifications"),
                             ("Alert sound", "sound"),

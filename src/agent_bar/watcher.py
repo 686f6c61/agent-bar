@@ -83,9 +83,9 @@ class SessionStore:
     def attention_sessions(self) -> list[SessionState]:
         return [s for s in self.sessions.values() if s.status == STATUS_NEEDS_YOU]
 
-    def today_total(self) -> int:
+    def today_total(self, include_cache_read: bool = True) -> int:
         from .stats import sum_total
-        return sum_total(self._stats.today())
+        return sum_total(self._stats.today(), include_cache_read)
 
     def stats(self) -> Stats:
         return self._stats

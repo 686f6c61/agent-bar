@@ -24,6 +24,9 @@ _TEMPLATE = """\
 style = "{style}"
 # Show today's token counter next to the icon.
 show_label = {show_label}
+# Include cache-read (re-sent context) in the label and menu totals.
+# Cost estimation always excludes cache-read either way.
+count_cache_read = {count_cache_read}
 # Blink interval (ms) while a session needs you.
 pulse_ms = {pulse_ms}
 # Animate the icon while an agent is working.
@@ -80,6 +83,7 @@ def _toml_bool(v: bool) -> str:
 class Config:
     style: str = "symbolic"
     show_label: bool = True
+    count_cache_read: bool = True
     pulse_ms: int = 600
     spinner: bool = True
     spinner_ms: int = 250
@@ -106,6 +110,7 @@ class Config:
         cfg = cls(
             style=str(panel.get("style", "symbolic")),
             show_label=bool(panel.get("show_label", True)),
+            count_cache_read=bool(panel.get("count_cache_read", True)),
             pulse_ms=int(panel.get("pulse_ms", 600)),
             spinner=bool(panel.get("spinner", True)),
             spinner_ms=int(panel.get("spinner_ms", 250)),
@@ -131,6 +136,7 @@ class Config:
         values: dict = {
             "style": self.style,
             "show_label": _toml_bool(self.show_label),
+            "count_cache_read": _toml_bool(self.count_cache_read),
             "pulse_ms": self.pulse_ms,
             "spinner": _toml_bool(self.spinner),
             "spinner_ms": self.spinner_ms,

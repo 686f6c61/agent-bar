@@ -62,18 +62,21 @@ def main(argv: list[str] | None = None) -> int:
         cfg = Config.load()
         st = Stats(stats_db())
         today, week = st.today(), st.week()
-        print(f"Today: {fmt_tokens(sum_total(today))} tokens"
+        inc = cfg.count_cache_read
+        print(f"Today: {fmt_tokens(sum_total(today, inc))} tokens"
               f"  ({fmt_cost(cost_all(today, cfg.prices), cfg.currency)})")
         for cli, u in sorted(today.items()):
             from .pricing import cost as cli_cost
-            print(f"  {cli:8s} {fmt_tokens(total_tokens(u)):>8s}"
+            print(f"  {cli:8s} {fmt_tokens(total_tokens(u, inc)):>8s}"
                   f"  {fmt_cost(cli_cost(cli, u, cfg.prices), cfg.currency)}")
             print(f"           in {fmt_tokens(u['input'])}"
                   f" · out {fmt_tokens(u['output'])}"
                   f" · cache-read {fmt_tokens(u['cache_read'])}"
                   f" · cache-write {fmt_tokens(u['cache_write'])}")
-        print(f"Week:  {fmt_tokens(sum_total(week))} tokens"
+        print(f"Week:  {fmt_tokens(sum_total(week, inc))} tokens"
               f"  ({fmt_cost(cost_all(week, cfg.prices), cfg.currency)})")
+        if not inc:
+            print("(cache-read excluded from totals; shown per CLI above)")
         print("\nNote: cache-read tokens are re-sent context; they dominate the"
               " token total but are excluded from the cost estimate.")
         return 0

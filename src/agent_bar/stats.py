@@ -93,5 +93,5 @@ class Stats:
         self._db.close()
 
 
-def sum_total(per_cli: dict) -> int:
-    return sum(total_tokens(v) for v in per_cli.values())
+def sum_total(per_cli: dict, include_cache_read: bool = True) -> int:
+    return sum(total_tokens(v, include_cache_read) for v in per_cli.values())

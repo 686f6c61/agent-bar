@@ -123,3 +123,9 @@ def test_fmt_tokens():
     assert fmt_tokens(999) == "999"
     assert fmt_tokens(12400) == "12.4k"
     assert fmt_tokens(2_500_000) == "2.5M"
+
+
+def test_total_tokens_cache_flag():
+    u = {"input": 100, "output": 20, "cache_read": 5000, "cache_write": 7}
+    assert total_tokens(u) == 5127
+    assert total_tokens(u, include_cache_read=False) == 127

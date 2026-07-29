@@ -4,6 +4,17 @@ All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning follows [Semantic Versioning](https://semver.org/).
 
+## [0.1.3] - 2026-07-29
+
+### Added
+
+- **Cache breakdown in the panel menu**: the stats section now shows today's
+  input / output / cache-read split.
+- **`count_cache_read` option** (Settings → "Include cache-read in totals",
+  or `panel.count_cache_read` in the config): when off, the panel label,
+  session tokens and totals count fresh tokens only (input + output +
+  cache-write). Cache reads remain visible in the breakdown. Applies live.
+
 ## [0.1.2] - 2026-07-29
 
 ### Changed

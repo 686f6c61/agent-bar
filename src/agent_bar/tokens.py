@@ -195,8 +195,9 @@ class TokenTracker:
         return dig(rec)
 
 
-def total_tokens(usage: dict) -> int:
-    return sum(usage.get(k, 0) for k in EMPTY)
+def total_tokens(usage: dict, include_cache_read: bool = True) -> int:
+    keys = ("input", "output", "cache_write") + (("cache_read",) if include_cache_read else ())
+    return sum(usage.get(k, 0) for k in keys)
 
 
 def fmt_tokens(n: float) -> str:
