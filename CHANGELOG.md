@@ -4,6 +4,22 @@ All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning follows [Semantic Versioning](https://semver.org/).
 
+## [0.1.1] - 2026-07-29
+
+### Fixed
+
+- **Token counts were exactly 2× too high for Kimi Code.** Its `wire.jsonl`
+  stores every model call twice — as `usage.record` and as an identical
+  `step.end` loop event — and both were summed. The parser now only counts
+  `usage.record`. Existing stats and pending flush state are migrated once
+  (kimi rows halved, guarded by `PRAGMA user_version`).
+
+### Added
+
+- `agent-bar stats` now breaks usage down into input / output / cache-read /
+  cache-write per CLI, with a note explaining that cache reads dominate the
+  token total but not the cost.
+
 ## [0.1.0] - 2026-07-29
 
 First public release.

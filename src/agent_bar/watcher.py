@@ -33,6 +33,14 @@ class SessionStore:
         self._listeners: list[Callable[[], None]] = []
         self._emit_pending = False
         self._last_reported: dict[str, dict] = self._load_reported()
+        if self._stats.migrated_dedup:
+            # keep reported totals consistent with the halved stats rows,
+            # otherwise future deltas would go negative and never flush
+            for key, vals in self._last_reported.items():
+                if key.startswith("kimi-"):
+                    for k in vals:
+                        vals[k] //= 2
+            self._save_reported()
         self._dir = sessions_dir()
         self._monitor = None
         self._load_existing()

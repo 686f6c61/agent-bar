@@ -4,7 +4,8 @@ import json
 
 from agent_bar.tokens import MAX_CHUNK, TokenTracker
 
-KIMI = {"usage": {"inputOther": 100, "output": 10,
+KIMI = {"type": "usage.record",
+        "usage": {"inputOther": 100, "output": 10,
                   "inputCacheRead": 1000, "inputCacheCreation": 0}}
 
 

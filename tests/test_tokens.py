@@ -14,13 +14,30 @@ def write_lines(tmp_path, name, records):
 
 
 KIMI_WIRE = {
+    "type": "usage.record",
+    "model": "kimi-code/k3",
+    "usageScope": "turn",
+    "usage": {"inputOther": 2075, "output": 515,
+              "inputCacheRead": 19200, "inputCacheCreation": 0},
+}
+
+# The same call ALSO appears as a step.end loop event with identical numbers:
+# counting both was the v0.1.0 double-count bug.
+KIMI_STEP_END = {
     "type": "context.append_loop_event",
     "event": {
-        "type": "step.finish",
+        "type": "step.end",
         "usage": {"inputOther": 2075, "output": 515,
                   "inputCacheRead": 19200, "inputCacheCreation": 0},
     },
 }
+
+
+def test_kimi_counts_usage_record_only(tmp_path):
+    """usage.record + identical step.end twin must count ONCE."""
+    path = write_lines(tmp_path, "wire.jsonl", [KIMI_WIRE, KIMI_STEP_END])
+    u = TokenTracker().update(path, "kimi")
+    assert u == {"input": 2075, "output": 515, "cache_read": 19200, "cache_write": 0}
 
 CLAUDE_LINE = {
     "type": "assistant",

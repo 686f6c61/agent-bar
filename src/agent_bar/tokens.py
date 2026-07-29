@@ -105,6 +105,11 @@ class TokenTracker:
 
         for usage in _walk_usage(rec):
             if fmt == "kimi":
+                # wire.jsonl stores each call TWICE: as "usage.record" and as
+                # a step.end loop event with identical numbers. usage.record
+                # is the canonical one — anything else would double-count.
+                if rec.get("type") != "usage.record":
+                    continue
                 if "inputOther" in usage or "inputCacheRead" in usage:
                     _add(total, {
                         "input": usage.get("inputOther", 0),

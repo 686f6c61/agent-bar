@@ -68,8 +68,14 @@ def main(argv: list[str] | None = None) -> int:
             from .pricing import cost as cli_cost
             print(f"  {cli:8s} {fmt_tokens(total_tokens(u)):>8s}"
                   f"  {fmt_cost(cli_cost(cli, u, cfg.prices), cfg.currency)}")
+            print(f"           in {fmt_tokens(u['input'])}"
+                  f" · out {fmt_tokens(u['output'])}"
+                  f" · cache-read {fmt_tokens(u['cache_read'])}"
+                  f" · cache-write {fmt_tokens(u['cache_write'])}")
         print(f"Week:  {fmt_tokens(sum_total(week))} tokens"
               f"  ({fmt_cost(cost_all(week, cfg.prices), cfg.currency)})")
+        print("\nNote: cache-read tokens are re-sent context billed at a lower"
+              " rate; they dominate the total but not the cost.")
         return 0
 
     if args.cmd == "doctor":

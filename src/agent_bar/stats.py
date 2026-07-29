@@ -24,9 +24,22 @@ CREATE TABLE IF NOT EXISTS usage (
 
 
 class Stats:
+    SCHEMA_VERSION = 1  # 1 = kimi rows halved (wire.jsonl duplicated usage)
+
     def __init__(self, db_path):
         self._db = sqlite3.connect(str(db_path))
         self._db.executescript(_SCHEMA)
+        self.migrated_dedup = False
+        version = self._db.execute("PRAGMA user_version").fetchone()[0]
+        if version < 1:
+            # v0.1.0 counted every kimi usage record twice (usage.record and
+            # its identical step.end twin). Halve existing kimi rows once.
+            self._db.execute(
+                """UPDATE usage SET input = input / 2, output = output / 2,
+                   cache_read = cache_read / 2, cache_write = cache_write / 2
+                   WHERE cli = 'kimi'""")
+            self._db.execute("PRAGMA user_version = 1")
+            self.migrated_dedup = True
         self._db.commit()
 
     def add(self, cli: str, session_id: str, delta: dict, title: str = "") -> None:

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agent-bar"
-version = "0.1.0"
+version = "0.1.1"
 description = "Linux top-bar indicator for AI coding agents (Kimi Code, Claude Code, Codex): live tokens, 'needs you' alerts, multi-session, stats."
 readme = "README.md"
 license = { text = "MIT" }
