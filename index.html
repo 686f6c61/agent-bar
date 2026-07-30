@@ -189,6 +189,11 @@
   th { background: var(--ink); color: var(--paper); text-transform: uppercase; font-size: 12px; letter-spacing: .08em; }
   .yes { color: var(--green); font-weight: 900; }
   .no { color: var(--accent); font-weight: 900; }
+  .beta {
+    display: inline-block; background: var(--blue); color: #fff;
+    font-size: 11px; font-weight: 900; padding: 1px 8px; margin-left: 8px;
+    border: 2px solid var(--ink); text-transform: uppercase; vertical-align: middle;
+  }
 
   /* ---------- install ---------- */
   pre {
@@ -261,7 +266,7 @@
   <h1>Your agents<br>work. <span class="q">?</span><br>You watch.</h1>
   <p>
     AGENT-BAR is a Linux top-bar indicator for AI coding agents —
-    <strong>Kimi Code</strong>, <strong>Claude Code</strong>, <strong>Codex</strong> and <strong>Grok</strong>.
+    <strong>Kimi Code</strong>, <strong>Claude Code</strong>, <strong>Codex</strong> <em>(beta)</em> and <strong>Grok</strong>.
     It taps you on the shoulder the exact moment an agent is stuck waiting for you,
     counts every token live, and tells you what the day cost.
   </p>
@@ -327,7 +332,7 @@
     <tr><th>CLI</th><th>Working / done</th><th>"Needs you"</th><th>Tokens</th></tr>
     <tr><td><strong>Kimi Code</strong></td><td class="yes">YES</td><td class="yes">YES — PermissionRequest + Notification</td><td class="yes">YES</td></tr>
     <tr><td><strong>Claude Code</strong></td><td class="yes">YES</td><td class="yes">YES — Notification + PermissionRequest</td><td class="yes">YES</td></tr>
-    <tr><td><strong>Codex</strong></td><td class="yes">YES — turn complete</td><td class="no">NO — no such hook exists</td><td class="yes">YES — cumulative</td></tr>
+    <tr><td><strong>Codex</strong><span class="beta">beta</span></td><td class="yes">YES — turn complete</td><td class="no">NO — no such hook exists</td><td class="yes">YES — cumulative</td></tr>
     <tr><td><strong>Grok</strong></td><td class="yes">YES</td><td class="yes">YES — derived from its event stream</td><td class="yes">YES — per-turn usage</td></tr>
   </table>
   <p style="margin-top:16px;font-size:14px">
