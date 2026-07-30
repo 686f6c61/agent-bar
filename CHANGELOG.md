@@ -4,6 +4,17 @@ All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning follows [Semantic Versioning](https://semver.org/).
 
+## [0.2.1] - 2026-07-30
+
+### Added
+
+- **CSV export** of usage and spend per session: daily, weekly (7d),
+  biweekly (15d) and monthly (30d) rolling reports with per-session columns
+  (in/out/cache breakdown, fresh vs total tokens, estimated cost) plus a
+  totals row. Via `agent-bar export [--period X] [--out DIR]` (defaults to
+  ~/Downloads) or the panel menu item "Export CSV reports", which notifies
+  the destination folder.
+
 ## [0.2.0] - 2026-07-30
 
 ### Added

@@ -34,6 +34,12 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("stats", help="print token usage summary")
     sub.add_parser("doctor", help="check environment, hooks and service status")
 
+    p_export = sub.add_parser("export", help="export usage CSVs (daily/weekly/biweekly/monthly)")
+    p_export.add_argument("--period", choices=["daily", "weekly", "biweekly", "monthly"],
+                          help="export only this period (default: all four)")
+    p_export.add_argument("--out", default=None,
+                          help="output directory (default: ~/Downloads)")
+
     args = parser.parse_args(argv)
 
     if args.cmd == "hook":
@@ -84,6 +90,23 @@ def main(argv: list[str] | None = None) -> int:
     if args.cmd == "doctor":
         from .doctor import run as doctor_run
         return doctor_run()
+
+    if args.cmd == "export":
+        from pathlib import Path
+        from .config import Config
+        from .export import default_out_dir, export, export_all
+        from .paths import stats_db
+        from .stats import Stats
+        cfg = Config.load()
+        st = Stats(stats_db())
+        out = Path(args.out) if args.out else default_out_dir()
+        if args.period:
+            paths = [export(st, args.period, out, cfg.prices)]
+        else:
+            paths = export_all(st, out, cfg.prices)
+        for p in paths:
+            print(p)
+        return 0
 
     # default: run the daemon
     from .app import main as app_main

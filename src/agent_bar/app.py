@@ -288,6 +288,10 @@ class AgentBarApp:
         top.set_submenu(submenu)
         self.menu.append(top)
 
+        export_item = Gtk.MenuItem(label="Export CSV reports (day/week/biweekly/month)")
+        export_item.connect("activate", self._export_csv)
+        self.menu.append(export_item)
+
         self.menu.append(Gtk.SeparatorMenuItem())
         self.menu.append(self._build_settings_menu())
         quit_item = Gtk.MenuItem(label="Quit agent-bar")
@@ -373,6 +377,15 @@ class AgentBarApp:
     def _show_question(self, _item, st) -> None:
         cli = CLI_LABEL.get(st.cli, st.cli)
         notify(f"{cli} needs you", st.question or "", urgency="critical")
+
+    def _export_csv(self, _item) -> None:
+        from .export import default_out_dir, export_all
+        try:
+            paths = export_all(self.store.stats(), default_out_dir(), self.cfg.prices)
+            notify("agent-bar: CSV exported",
+                   f"{len(paths)} reports saved to {paths[0].parent}")
+        except Exception as exc:
+            notify("agent-bar: export failed", str(exc), urgency="critical")
 
 
 def main() -> None:
