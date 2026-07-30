@@ -14,6 +14,10 @@ DEFAULT_PRICES: dict[str, dict[str, float]] = {
     "kimi":   {"input": 0.60, "output": 2.50, "cache_read": 0.15, "cache_write": 0.60},
     "claude": {"input": 3.00, "output": 15.00, "cache_read": 0.30, "cache_write": 3.75},
     "codex":  {"input": 1.25, "output": 10.00, "cache_read": 0.125, "cache_write": 1.25},
+    # grok is subscription-based for most users: 0.0 means "no estimate".
+    # Grok transcripts carry real costUsdTicks per turn — using them is
+    # planned; for now set your own rates here if you pay per token.
+    "grok":   {"input": 0.0, "output": 0.0, "cache_read": 0.0, "cache_write": 0.0},
 }
 
 # tokens per context window (defaults; override in config)
@@ -21,6 +25,7 @@ DEFAULT_CONTEXT_WINDOW: dict[str, int] = {
     "kimi": 262_144,
     "claude": 200_000,
     "codex": 200_000,
+    "grok": 500_000,
 }
 
 

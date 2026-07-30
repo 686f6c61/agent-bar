@@ -152,7 +152,7 @@ class SessionStore:
 
     def _tick(self) -> bool:
         now = time.time()
-        changed = False
+        changed = self._poll_grok(now)
         for key, st in list(self.sessions.items()):
             if st.transcript:
                 usage = self._tracker.update(st.transcript, st.cli)
@@ -178,6 +178,23 @@ class SessionStore:
             (self._dir / f"{key}.json").unlink(missing_ok=True)
         except OSError:
             pass
+
+    def _poll_grok(self, now: float) -> bool:
+        """Grok has no hooks: discover its sessions from its files."""
+        from .adapters import grok as grok_adapter
+        changed = False
+        for st in grok_adapter.discover():
+            old = self.sessions.get(st.key)
+            if old:
+                st.tokens = old.tokens
+                if st.status == old.status and st.question == old.question:
+                    st.updated_at = old.updated_at
+                else:
+                    changed = True
+            else:
+                changed = True
+            self.sessions[st.key] = st
+        return changed
 
     def _flush_tokens_all(self) -> None:
         for st in self.sessions.values():

@@ -8,7 +8,7 @@
 **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 
 A Linux top-bar indicator that watches your AI coding agents — **Kimi Code**,
-**Claude Code** and **Codex CLI** — and tells you, at a glance:
+**Claude Code**, **Codex CLI** and **Grok** — and tells you, at a glance:
 
 - **"Needs you"** — the icon pulses orange when an agent is waiting for a
   permission or an answer, with a desktop notification containing the exact
@@ -120,6 +120,11 @@ CLI sessions. Token counting parses each CLI's own session logs incrementally
 | Kimi Code | ✅ | ✅ (`PermissionRequest`, `Notification`) | ✅ |
 | Claude Code | ✅ | ✅ (`Notification`, `PermissionRequest`) | ✅ |
 | Codex | ✅ (turn complete) | ❌ (Codex exposes no waiting-for-input hook) | ✅ (cumulative) |
+| Grok | ✅ | ✅ (derived from `events.jsonl` — file watching, no hooks needed) | ✅ (per-turn usage, real `costUsdTicks` on file) |
+
+Grok needs nothing installed: agent-bar watches `~/.grok/sessions/` directly.
+Cost estimation for Grok defaults to 0 (subscription-based for most users) —
+set your own rates under `[prices.grok]` if you pay per token.
 
 Note on Wayland: there is no reliable API to raise/focus the terminal window
 that owns the session, so the "needs you" notification carries the full

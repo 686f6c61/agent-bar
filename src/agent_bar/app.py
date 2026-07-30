@@ -29,7 +29,7 @@ from .stats import sum_total
 from .tokens import fmt_tokens, total_tokens
 from .watcher import SessionStore
 
-CLI_LABEL = {"kimi": "Kimi", "claude": "Claude", "codex": "Codex"}
+CLI_LABEL = {"kimi": "Kimi", "claude": "Claude", "codex": "Codex", "grok": "Grok"}
 STATUS_LABEL = {
     STATUS_WORKING: "working",
     STATUS_NEEDS_YOU: "needs you",

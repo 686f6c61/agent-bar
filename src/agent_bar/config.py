@@ -51,6 +51,7 @@ show_cost = {show_cost}
 kimi = {cw_kimi}
 claude = {cw_claude}
 codex = {cw_codex}
+grok = {cw_grok}
 
 # Estimated prices, USD per 1M tokens. Vendors reprice often — adjust to your
 # plan. Cost is computed from "fresh" tokens only (input, output, cache_write);
@@ -72,6 +73,13 @@ input = {p_codex_input}
 output = {p_codex_output}
 cache_read = {p_codex_cache_read}
 cache_write = {p_codex_cache_write}
+
+# Grok is subscription-based for most users (0 = no estimate).
+[prices.grok]
+input = {p_grok_input}
+output = {p_grok_output}
+cache_read = {p_grok_cache_read}
+cache_write = {p_grok_cache_write}
 """
 
 
@@ -146,7 +154,7 @@ class Config:
             "show_cost": _toml_bool(self.show_cost),
         }
         prices = merged_prices(self.prices)
-        for cli in ("kimi", "claude", "codex"):
+        for cli in ("kimi", "claude", "codex", "grok"):
             values[f"cw_{cli}"] = self.context_window.get(
                 cli, DEFAULT_CONTEXT_WINDOW[cli])
             for k in ("input", "output", "cache_read", "cache_write"):

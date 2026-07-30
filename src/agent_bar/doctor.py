@@ -62,6 +62,11 @@ def run() -> int:
             found = False
         add(f"{cli} hooks installed", found, str(cfg))
 
+    # grok needs no hooks: it is watched via its session files
+    from .adapters.grok import grok_home
+    add("grok data found (file watching, no hooks needed)",
+        (grok_home() / "sessions").is_dir(), str(grok_home()))
+
     # config + state dirs
     add("config file", CONFIG_PATH.exists(), str(CONFIG_PATH))
     add("state dir writable", paths.sessions_dir().exists(),

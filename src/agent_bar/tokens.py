@@ -102,6 +102,9 @@ class TokenTracker:
                 if ctx:
                     self._last_ctx[path] = ctx
             return
+        if fmt == "grok":
+            self._consume_grok(rec, path, total)
+            return
 
         for usage in _walk_usage(rec):
             if fmt == "kimi":
@@ -140,6 +143,27 @@ class TokenTracker:
                         + usage.get("cache_read_input_tokens", 0)
                         + usage.get("cache_creation_input_tokens", 0)
                     )
+
+    def _consume_grok(self, rec: dict, path: str, total: dict) -> None:
+        """grok updates.jsonl: turn_completed carries per-turn usage."""
+        upd = (rec.get("params") or {}).get("update") or {}
+        if upd.get("sessionUpdate") != "turn_completed":
+            return
+        usage = upd.get("usage")
+        if not isinstance(usage, dict) or "inputTokens" not in usage:
+            return
+        pid = upd.get("prompt_id")
+        if pid and pid in self._seen.setdefault(path, set()):
+            return
+        if pid:
+            self._seen[path].add(pid)
+        _add(total, {
+            "input": usage.get("inputTokens", 0),
+            "output": usage.get("outputTokens", 0) + usage.get("reasoningTokens", 0),
+            "cache_read": usage.get("cachedReadTokens", 0),
+            "cache_write": 0,
+        })
+        self._last_ctx[path] = usage.get("inputTokens", 0)
 
     @staticmethod
     def _claude_dedupe_key(rec: dict) -> Optional[str]:

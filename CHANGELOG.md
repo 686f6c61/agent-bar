@@ -4,6 +4,24 @@ All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning follows [Semantic Versioning](https://semver.org/).
 
+## [0.2.0] - 2026-07-30
+
+### Added
+
+- **Grok CLI (xAI) support** — full parity with the other agents:
+  - Status derived from Grok's own `events.jsonl` tail: `permission_requested`
+    without a later `permission_resolved` shows the pulsing "needs you" alert
+    (with the tool it's asking about); `turn_started`/`turn_ended` map to
+    working/idle. No hooks exist in Grok — agent-bar watches
+    `~/.grok/sessions/` directly, nothing to install.
+  - Tokens from `updates.jsonl` `turn_completed` records (input, output +
+    reasoning, cache-read), deduplicated by `prompt_id`.
+  - Context-window fill (`ctx %`) from the last turn's input (500k default).
+  - Grok appears in the session menu with its own dot color, in
+    `agent-bar stats`, and in `agent-bar doctor`.
+  - Price table defaults to 0 (subscription-based); real `costUsdTicks` from
+    Grok transcripts is on the roadmap.
+
 ## [0.1.4] - 2026-07-29
 
 ### Added

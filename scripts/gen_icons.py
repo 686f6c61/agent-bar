@@ -20,7 +20,8 @@ BLUE = "#3584e4"
 GREEN = "#2ec27e"
 ORANGE = "#e66100"
 
-CLI_COLORS = {"kimi": "#4f7cff", "claude": "#d97757", "codex": "#10a37f"}
+CLI_COLORS = {"kimi": "#4f7cff", "claude": "#d97757", "codex": "#10a37f",
+              "grok": "#111111"}
 
 SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22">{}</svg>\n'
 
