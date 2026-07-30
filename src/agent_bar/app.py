@@ -380,10 +380,26 @@ class AgentBarApp:
 
     def _export_csv(self, _item) -> None:
         from .export import default_out_dir, export_all
+        dialog = Gtk.FileChooserDialog(
+            title="Export CSV reports — choose folder",
+            action=Gtk.FileChooserAction.SELECT_FOLDER,
+        )
+        dialog.add_buttons("Cancel", Gtk.ResponseType.CANCEL,
+                           "Export here", Gtk.ResponseType.OK)
+        dialog.set_current_folder(str(default_out_dir()))
+        dialog.set_keep_above(True)
+        dialog.set_position(Gtk.WindowPosition.CENTER)
+        dialog.show_all()
+        response = dialog.run()
+        folder = dialog.get_current_folder() if response == Gtk.ResponseType.OK else None
+        dialog.destroy()
+        if not folder:
+            return
+        from pathlib import Path
         try:
-            paths = export_all(self.store.stats(), default_out_dir(), self.cfg.prices)
+            paths = export_all(self.store.stats(), Path(folder), self.cfg.prices)
             notify("agent-bar: CSV exported",
-                   f"{len(paths)} reports saved to {paths[0].parent}")
+                   f"{len(paths)} reports saved to {folder}")
         except Exception as exc:
             notify("agent-bar: export failed", str(exc), urgency="critical")
 

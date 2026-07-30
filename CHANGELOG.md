@@ -4,6 +4,14 @@ All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning follows [Semantic Versioning](https://semver.org/).
 
+## [0.2.2] - 2026-07-30
+
+### Changed
+
+- The panel menu's "Export CSV reports" now opens a folder chooser dialog
+  (pre-selected to ~/Downloads) instead of saving silently. Cancel closes it
+  without exporting. The CLI `agent-bar export` behavior is unchanged.
+
 ## [0.2.1] - 2026-07-30
 
 ### Added
