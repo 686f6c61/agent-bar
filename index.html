@@ -189,6 +189,41 @@
   pre .c { color: #9a9996; }
   pre .p { color: #57e389; }
 
+  /* ---------- faq ---------- */
+  details {
+    background: #fff; border: 3px solid var(--ink); margin-bottom: 14px;
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+  summary {
+    cursor: pointer; padding: 16px 20px; font-weight: 900; font-size: 16px;
+    text-transform: uppercase; list-style: none;
+  }
+  summary::before { content: "+ "; color: var(--accent); }
+  details[open] summary::before { content: "− "; }
+  summary:hover { background: var(--accent); color: #fff; }
+  summary:hover::before { color: #fff; }
+  details p { padding: 0 20px 16px; font-size: 14px; max-width: 70ch; }
+
+  /* ---------- author ---------- */
+  .author {
+    display: flex; flex-wrap: wrap; gap: 24px; align-items: center;
+    background: #fff; border: 3px solid var(--ink); padding: 24px;
+    box-shadow: 8px 8px 0 var(--ink);
+  }
+  .author .avatar {
+    width: 72px; height: 72px; border: 3px solid var(--ink); border-radius: 0;
+    background: var(--accent); color: #fff; font-size: 40px; font-weight: 900;
+    display: flex; align-items: center; justify-content: center; flex: none;
+  }
+  .author h3 { font-size: 24px; font-weight: 900; text-transform: uppercase; }
+  .author p { font-size: 14px; }
+  .author .links a {
+    display: inline-block; margin: 8px 10px 0 0; padding: 6px 14px;
+    border: 2px solid var(--ink); font-weight: 800; font-size: 13px;
+    color: var(--ink); text-decoration: none;
+  }
+  .author .links a:hover { background: var(--ink); color: var(--paper); }
+
   /* ---------- footer ---------- */
   footer { padding: 40px 20px; display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-between; align-items: center; }
   footer .big { font-size: clamp(24px, 4vw, 44px); font-weight: 900; text-transform: uppercase; }
@@ -201,11 +236,12 @@
 <div class="topbar">
   <a href="#" class="brand">
     <svg viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="9" fill="#e66100" stroke="#111" stroke-width="1.5"/><text x="11" y="15.5" font-family="monospace" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">?</text></svg>
-    <strong>AGENT-BAR</strong>&nbsp;v0.1.0
+    <strong>AGENT-BAR</strong>&nbsp;v0.2.0
   </a>
   <nav>
     <a href="#features"><svg viewBox="0 0 16 16" fill="#111"><path d="M1 1h6v6H1zM9 1h6v6H9zM1 9h6v6H1zM9 9h6v6H9z"/></svg>Features</a>
     <a href="#support"><svg viewBox="0 0 16 16" fill="#111"><path d="M1 2h14v2H1zM1 7h14v2H1zM1 12h14v2H1z"/></svg>Support</a>
+    <a href="#faq"><svg viewBox="0 0 16 16" fill="#111"><circle cx="8" cy="8" r="7" fill="none" stroke="#111" stroke-width="2"/><text x="8" y="11.5" font-size="9" font-weight="bold" fill="#111" text-anchor="middle">?</text></svg>FAQ</a>
     <a href="#install"><svg viewBox="0 0 16 16" fill="#111"><path d="M8 1v9M4.5 6.5 8 10l3.5-3.5M2 13h12v2H2z" stroke="#111" stroke-width="2" fill="none"/></svg>Install</a>
     <a href="https://github.com/686f6c61/agent-bar"><svg viewBox="0 0 16 16" fill="#111"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>GitHub ↗</a>
   </nav>
@@ -215,7 +251,7 @@
   <h1>Your agents<br>work. <span class="q">?</span><br>You watch.</h1>
   <p>
     AGENT-BAR is a Linux top-bar indicator for AI coding agents —
-    <strong>Kimi Code</strong>, <strong>Claude Code</strong> and <strong>Codex</strong>.
+    <strong>Kimi Code</strong>, <strong>Claude Code</strong>, <strong>Codex</strong> and <strong>Grok</strong>.
     It taps you on the shoulder the exact moment an agent is stuck waiting for you,
     counts every token live, and tells you what the day cost.
   </p>
@@ -282,6 +318,7 @@
     <tr><td><strong>Kimi Code</strong></td><td class="yes">YES</td><td class="yes">YES — PermissionRequest + Notification</td><td class="yes">YES</td></tr>
     <tr><td><strong>Claude Code</strong></td><td class="yes">YES</td><td class="yes">YES — Notification + PermissionRequest</td><td class="yes">YES</td></tr>
     <tr><td><strong>Codex</strong></td><td class="yes">YES — turn complete</td><td class="no">NO — no such hook exists</td><td class="yes">YES — cumulative</td></tr>
+    <tr><td><strong>Grok</strong></td><td class="yes">YES</td><td class="yes">YES — derived from its event stream</td><td class="yes">YES — per-turn usage</td></tr>
   </table>
   <p style="margin-top:16px;font-size:14px">
     Hooks are observational and fail-open: agent-bar can never block or break your CLI sessions.
@@ -306,12 +343,62 @@
   </p>
 </section>
 
+<section id="faq">
+  <span class="tag">FAQ</span>
+  <h2>Questions, answered.</h2>
+  <details open>
+    <summary>Does it spy on my sessions?</summary>
+    <p>No telemetry, no network calls, nothing leaves your machine. agent-bar only reads the session files your CLIs already write locally and shows them in your panel. The code is MIT — audit it, it's small.</p>
+  </details>
+  <details>
+    <summary>Can it break or block my CLI sessions?</summary>
+    <p>No. Hooks are observational and fail-open by design: even if agent-bar crashes mid-hook, the CLI continues as if nothing happened. Grok isn't even hooked — we just watch its files.</p>
+  </details>
+  <details>
+    <summary>Which desktops are supported?</summary>
+    <p>Anything with an AppIndicator / StatusNotifierItem tray: GNOME (Ubuntu ships the extension), KDE Plasma, XFCE, Cinnamon, MATE… X11 and Wayland.</p>
+  </details>
+  <details>
+    <summary>Why doesn't Codex alert "needs you"?</summary>
+    <p>Codex only exposes a turn-complete notification — there is no waiting-for-input signal to hook. The day Codex adds one, we'll support it. Tokens and completion work fine.</p>
+  </details>
+  <details>
+    <summary>My token count looks huge. Is that real?</summary>
+    <p>Most of it is usually cache-read: the context re-sent on every model call. Open the menu or <code>agent-bar stats</code> for the in/out/cache breakdown, or flip "Include cache-read in totals" off in Settings to count fresh tokens only.</p>
+  </details>
+  <details>
+    <summary>How accurate is the cost?</summary>
+    <p>It's an estimate from an editable price table (vendors reprice; many CLIs are subscriptions). We compute it from fresh tokens only — input, output and cache-write. If you're on a flat plan, your marginal cost is whatever your plan says, not our number.</p>
+  </details>
+  <details>
+    <summary>How do I uninstall?</summary>
+    <p><code>./scripts/uninstall.sh</code> — removes the daemon, the systemd unit and every hook it registered. Your original CLI configs are restorable from the <code>*.agent-bar.bak</code> backups.</p>
+  </details>
+</section>
+
+<section id="author">
+  <span class="tag">Author</span>
+  <h2>Built by 686f6c61.</h2>
+  <div class="author">
+    <div class="avatar">?</div>
+    <div>
+      <h3>686f6c61</h3>
+      <p>Builds tools that watch other tools work. agent-bar is MIT, no telemetry, PRs welcome.</p>
+      <div class="links">
+        <a href="https://github.com/686f6c61/agent-bar">GitHub repo</a>
+        <a href="https://x.com/686f6c61">@686f6c61 on X</a>
+        <a href="https://github.com/686f6c61/agent-bar/issues">Report a bug</a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <footer>
   <div class="big">MIT. OSS. No telemetry.</div>
   <div>
     <a href="https://github.com/686f6c61/agent-bar">GitHub</a> ·
     <a href="https://x.com/686f6c61">@686f6c61 on X</a> ·
-    <a href="https://github.com/686f6c61/agent-bar/releases/tag/v0.1.0">v0.1.0</a> ·
+    <a href="https://github.com/686f6c61/agent-bar/releases/tag/v0.2.0">v0.2.0</a> ·
     <a href="https://github.com/686f6c61/agent-bar/issues">Issues</a> ·
     built by <a href="https://github.com/686f6c61">686f6c61</a>
   </div>
