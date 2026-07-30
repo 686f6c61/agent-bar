@@ -19,6 +19,7 @@ except ValueError:
     from gi.repository import AppIndicator3 as AppIndicator
 
 from .adapters.base import STATUS_DONE, STATUS_IDLE, STATUS_NEEDS_YOU, STATUS_WORKING
+from . import autostart
 from .config import Config
 from .notify import notify
 from .paths import assets_dir
@@ -312,6 +313,12 @@ class AgentBarApp:
             item.connect("toggled", self._on_toggle, attr)
             sub.append(item)
 
+        if autostart.available():
+            login_item = Gtk.CheckMenuItem(label="Launch at login")
+            login_item.set_active(autostart.is_enabled())
+            login_item.connect("toggled", self._on_autostart)
+            sub.append(login_item)
+
         sub.append(Gtk.SeparatorMenuItem())
 
         r_sym = Gtk.RadioMenuItem(label="Symbolic icons (GNOME style)")
@@ -343,6 +350,11 @@ class AgentBarApp:
         setattr(self.cfg, attr, item.get_active())
         self.cfg.save()
         self.refresh()
+
+    def _on_autostart(self, item) -> None:
+        ok = autostart.set_enabled(item.get_active())
+        if not ok:  # revert the checkbox if systemd refused
+            item.set_active(not item.get_active())
 
     def _on_style(self, item, style: str) -> None:
         if not item.get_active():

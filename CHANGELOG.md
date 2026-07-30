@@ -4,6 +4,15 @@ All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning follows [Semantic Versioning](https://semver.org/).
 
+## [0.1.4] - 2026-07-29
+
+### Added
+
+- **"Launch at login" toggle in Settings**: enables/disables the systemd
+  user unit. Reflects the real systemd state (`is-enabled`), affects only
+  the next login (never kills the running daemon), and is hidden on systems
+  without the unit installed.
+
 ## [0.1.3] - 2026-07-29
 
 ### Added
